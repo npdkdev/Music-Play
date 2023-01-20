@@ -1,45 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:orientation="vertical"
     tools:context=".HomeActivity">
 
     <LinearLayout
         android:id="@+id/bgatas"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:background="@color/green">
-    </LinearLayout>
-    <eightbitlab.com.blurview.BlurView
-        android:id="@+id/blurView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:background="@color/black">
+
         <LinearLayout
+            android:id="@+id/bgatas2"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="400dp">
-        </LinearLayout>
-    </eightbitlab.com.blurview.BlurView>
+            android:layout_height="400dp"
+            android:background="@color/colorPrimary"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/wave"/>
+
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/card"
         android:layout_width="320dp"
         android:layout_height="510dp"
         android:layout_centerInParent="true"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:background="@drawable/shape_shadow">
+        android:layout_gravity="center_vertical|center_horizontal">
+<!--        <ImageView-->
+<!--            android:id="@+id/asukau"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:src="@drawable/rawrr"-->
+<!--            android:scaleType="fitCenter"/>-->
 
+        <eightbitlab.com.blurview.BlurView
+            android:id="@+id/blurView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape_shadow">
+
+        </eightbitlab.com.blurview.BlurView>
         <androidx.cardview.widget.CardView
-            android:id="@+id/lineethumb"
+            android:id="@+id/linethumb"
             android:layout_width="280dp"
             android:layout_height="280dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="50dp"
-            android:elevation="0dp"
+            android:elevation="20dp"
+            app:cardElevation="20dp"
             app:cardCornerRadius="10dp">
 
             <ImageView
@@ -54,7 +69,7 @@
             android:id="@+id/song"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/lineethumb"
+            android:layout_below="@id/linethumb"
             android:layout_centerInParent="true"
             android:layout_marginTop="8dp"
             android:fontFamily="@font/poppins"
@@ -183,4 +198,4 @@
         android:layout_marginBottom="16dp"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

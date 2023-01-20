@@ -11,4 +11,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="green">#04ab24</color>
     <color name="colorOverlay">#78ffffff</color>
+    <color name="colorPrimary">#0099ff</color>
 </resources>

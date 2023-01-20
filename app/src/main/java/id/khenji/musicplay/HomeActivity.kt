@@ -1,19 +1,23 @@
 package id.khenji.musicplay
 
-import android.graphics.Color
-import android.graphics.RenderEffect
-import android.graphics.Shader
+import android.content.Context
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.AttributeSet
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -22,11 +26,13 @@ import com.squareup.picasso.Picasso
 import eightbitlab.com.blurview.BlurAlgorithm
 import eightbitlab.com.blurview.BlurView
 import eightbitlab.com.blurview.RenderScriptBlur
+import jp.wasabeef.blurry.Blurry
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 import com.squareup.picasso.Callback as CB
+
 
 class HomeActivity : AppCompatActivity() {
 
@@ -50,6 +56,15 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var endTime: TextView
     private val myHandler: Handler = Handler()
 
+    private val Number.toPx get() = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        this.toFloat(),
+        resources.displayMetrics).toInt()
+    private val Number.toDp get() = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_PX,
+        this.toFloat(),
+        resources.displayMetrics).toInt()
+
     companion object {
         var isReady = false
         var isPause = false
@@ -65,7 +80,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.home)
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
@@ -89,7 +104,7 @@ class HomeActivity : AppCompatActivity() {
         this.shuffleSong = ArrayList()
         this.mp = MediaPlayer()
         this.blurView = findViewById(R.id.blurView)
-        this.blurView.applyBlur();
+        //this.blurView.applyBlur(R.id.bgatas)
         this.seekbar_song.thumb.mutate().alpha = 0
         this.endTime = findViewById(R.id.endtime)
         this.startTime = findViewById(R.id.starttime)
@@ -102,13 +117,18 @@ class HomeActivity : AppCompatActivity() {
             .into(thumb)
         var ready = getSongs()
 
-
-        fab!!.setOnClickListener { view ->
+        fab.setOnClickListener { view ->
             if (isReady){
                 setReady()
+//                this.blurView.applyBlur(R.id.linethumb)
+                val bitmap = Blurry.with(this)
+                    .radius(50)
+                    .capture(findViewById(R.id.thumbnail)).get()
+                val bitmap2: Bitmap = ImageHelper.getRoundedCornerBitmap(bitmap, 18.toPx,13.toPx)
+                findViewById<View>(R.id.card).background = BitmapDrawable(resources,bitmap2)
+                val cardd = findViewById<View>(R.id.card)
+                Toast.makeText(this, "width ${cardd.width} height ${cardd.height}", Toast.LENGTH_SHORT).show()
             }
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
         }
         play.setOnClickListener { view ->
             if (!isPlay){
@@ -181,7 +201,7 @@ class HomeActivity : AppCompatActivity() {
 
             startTime.text = textTime
             endTime.text = textTime2
-            seekbar_song.progress = timeStart as Int
+            seekbar_song.progress = timeStart
             myHandler.postDelayed(updateTimeline, 100)
         }
 //        mp.setOnErrorListener { mplayer, what, i2 ->
@@ -293,12 +313,14 @@ class HomeActivity : AppCompatActivity() {
         })
     }
 
-    private fun BlurView.applyBlur(){
-        val radius = 20f
+    private fun BlurView.applyBlur(idview: Int){
+        val radius = 5f
         val decorView = window.decorView
         // ViewGroup you want to start blur from. Choose root as close to BlurView in hierarchy as possible.
-        val rootView = decorView.findViewById<View>(android.R.id.content) as ViewGroup
+        val rootView = decorView.findViewById<View>(idview) as ViewGroup
         val windowBackground = decorView.background
+        this.outlineProvider = ViewOutlineProvider.BACKGROUND
+        this.clipToOutline = true
         val blurEffect = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             RenderEffect.createBlurEffect(x, y, Shader.TileMode.MIRROR)
         } else {
@@ -340,5 +362,28 @@ class HomeActivity : AppCompatActivity() {
             mp.release()
         }
     }
-}
 
+}
+class CustomImageView : androidx.appcompat.widget.AppCompatImageView {
+    constructor(context: Context?) : super(context!!) {}
+    constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs) {}
+    constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(
+        context!!,
+        attrs,
+        defStyle
+    ) {
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        //float radius = 36.0f;
+        val clipPath = Path()
+        val rect = RectF(0F, 0F, this.width.toFloat(), this.height.toFloat())
+        clipPath.addRoundRect(rect, radius, radius, Path.Direction.CW)
+        canvas.clipPath(clipPath)
+        super.onDraw(canvas)
+    }
+
+    companion object {
+        var radius = 18.0f
+    }
+}
